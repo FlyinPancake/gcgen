@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Input",
+  "type": "object",
+  "properties": {
+    "default": {
+      "$ref": "#/$defs/GitConfig"
+    },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/GitProfile"
+      }
+    }
+  },
+  "required": [
+    "default"
+  ],
+  "$defs": {
+    "GitConfig": {
+      "type": "object",
+      "properties": {
+        "aliases": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[a-zA-Z0-9]+$": {
+              "type": "string"
+            }
+          }
+        },
+        "gpg": {
+          "$ref": "#/$defs/GpgConfig"
+        },
+        "ssh": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SshConfig"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "user_email": {
+          "type": "string"
+        },
+        "user_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_name",
+        "user_email"
+      ]
+    },
+    "GitProfile": {
+      "type": "object",
+      "properties": {
+        "aliases": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[a-zA-Z0-9]+$": {
+              "type": "string"
+            }
+          }
+        },
+        "gpg": {
+          "$ref": "#/$defs/GpgConfig"
+        },
+        "path": {
+          "type": "string"
+        },
+        "ssh": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SshConfig"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "user_email": {
+          "type": "string"
+        },
+        "user_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "user_name",
+        "user_email"
+      ]
+    },
+    "GpgConfig": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "off"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "gpg_key_id": {
+              "type": "object",
+              "properties": {
+                "gpg_key_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "gpg_key_id"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "gpg_key_id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ssh_key": {
+              "$ref": "#/$defs/SshKeySource"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "ssh_key"
+          ]
+        }
+      ]
+    },
+    "SshConfig": {
+      "type": "object",
+      "properties": {
+        "identity_file": {
+          "description": "Key to authenticate with. A public key file selects the matching key from ssh-agent.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identity_file"
+      ]
+    },
+    "SshKeySource": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "key"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "file"
+          ]
+        }
+      ]
+    }
+  }
+}

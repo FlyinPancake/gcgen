@@ -1,0 +1,16 @@
+[package]
+name = "gcgen"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.6.7", features = ["derive"] }
+color-eyre = "0.6.5"
+config = { version = "0.15.26", default-features = false, features = ["toml"] }
+garde = { version = "0.23.0", features = ["derive"] }
+gix-config = { version = "0.61.0", features = ["sha1"] }
+gix-error = "0.4"
+schemars = "1.2.2"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+thiserror = "2.0.21"

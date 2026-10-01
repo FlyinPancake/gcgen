@@ -1,0 +1,2 @@
+[tasks.gen-schema]
+run = "cargo run -- --schema > input-schema.json"

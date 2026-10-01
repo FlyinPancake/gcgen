@@ -1,0 +1,3 @@
+# `.gitconfig` generator
+
+`gcgen`
