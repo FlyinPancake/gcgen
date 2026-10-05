@@ -36,6 +36,9 @@ mod input {
         #[serde(default)]
         pub aliases: BTreeMap<GitAliasName, String>,
         pub ssh: Option<SshConfig>,
+        /// Register the git-lfs filter, like `git lfs install` does.
+        #[serde(default)]
+        pub lfs: bool,
     }
 
     #[derive(Debug, Deserialize, JsonSchema)]
@@ -135,6 +138,14 @@ mod render {
                     ssh.identity_file.to_string_lossy()
                 );
                 push(&mut core, "sshCommand", &command)?;
+            }
+
+            if self.lfs {
+                let mut filter = file.new_section("filter", "lfs")?;
+                push(&mut filter, "clean", "git-lfs clean -- %f")?;
+                push(&mut filter, "smudge", "git-lfs smudge -- %f")?;
+                push(&mut filter, "process", "git-lfs filter-process")?;
+                push(&mut filter, "required", "true")?;
             }
 
             if !self.aliases.is_empty() {
@@ -248,6 +259,24 @@ mod render {
                 work.contains("\tsshCommand = ssh -i ~/.ssh/work.pub -o IdentitiesOnly=yes"),
                 "{work}"
             );
+        }
+
+        #[test]
+        fn lfs_filter() {
+            let input: Input = toml_input(
+                r#"
+                [default]
+                user_name = "me"
+                user_email = "me@home"
+                lfs = true
+                "#,
+            );
+            let config = input.render().unwrap()[0].config.to_string();
+            assert!(config.contains("[filter \"lfs\"]"), "{config}");
+            assert!(config.contains("\tclean = git-lfs clean -- %f"), "{config}");
+            assert!(config.contains("\tsmudge = git-lfs smudge -- %f"), "{config}");
+            assert!(config.contains("\tprocess = git-lfs filter-process"), "{config}");
+            assert!(config.contains("\trequired = true"), "{config}");
         }
 
         fn toml_input(source: &str) -> Input {

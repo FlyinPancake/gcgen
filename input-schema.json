@@ -32,6 +32,11 @@
         "gpg": {
           "$ref": "#/$defs/GpgConfig"
         },
+        "lfs": {
+          "description": "Register the git-lfs filter, like `git lfs install` does.",
+          "type": "boolean",
+          "default": false
+        },
         "ssh": {
           "anyOf": [
             {
@@ -68,6 +73,11 @@
         },
         "gpg": {
           "$ref": "#/$defs/GpgConfig"
+        },
+        "lfs": {
+          "description": "Register the git-lfs filter, like `git lfs install` does.",
+          "type": "boolean",
+          "default": false
         },
         "path": {
           "type": "string"
