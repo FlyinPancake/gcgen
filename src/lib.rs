@@ -39,6 +39,8 @@ mod input {
         /// Register the git-lfs filter, like `git lfs install` does.
         #[serde(default)]
         pub lfs: bool,
+        #[serde(default)]
+        pub default_branch: Option<String>,
     }
 
     #[derive(Debug, Deserialize, JsonSchema)]
@@ -154,6 +156,12 @@ mod render {
                     push(&mut alias, name.as_str(), command)?;
                 }
             }
+
+            if let Some(branch) = &self.default_branch {
+                let mut core = file.new_section("core", None)?;
+                push(&mut core, "defaultBranch", branch)?;
+            }
+
             Ok(())
         }
     }
@@ -274,8 +282,14 @@ mod render {
             let config = input.render().unwrap()[0].config.to_string();
             assert!(config.contains("[filter \"lfs\"]"), "{config}");
             assert!(config.contains("\tclean = git-lfs clean -- %f"), "{config}");
-            assert!(config.contains("\tsmudge = git-lfs smudge -- %f"), "{config}");
-            assert!(config.contains("\tprocess = git-lfs filter-process"), "{config}");
+            assert!(
+                config.contains("\tsmudge = git-lfs smudge -- %f"),
+                "{config}"
+            );
+            assert!(
+                config.contains("\tprocess = git-lfs filter-process"),
+                "{config}"
+            );
             assert!(config.contains("\trequired = true"), "{config}");
         }
 
